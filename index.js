@@ -85,8 +85,6 @@ app.use(
   assetAssignmentRoutes
 );
 
-app.use("", verifyToken);
-
 //Employee Management
 app.use("/service_link_api/employees", verifyToken, employeeRoutes);
 
