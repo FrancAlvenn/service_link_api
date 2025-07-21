@@ -10,13 +10,13 @@ async function initDB() {
   try {
     // Try connecting to MySQL (Railway or local)
     sequelize = new Sequelize(
-      process.env.MYSQL_DB,
-      process.env.MYSQL_USER,
-      process.env.MYSQL_PASSWORD,
+      process.env.MYSQL_DATABASE,
+      process.env.MYSQLUSER,
+      process.env.MYSQLPASSWORD,
       {
-        host: process.env.MYSQL_HOST,
+        host: process.env.MYSQLHOST,
         dialect: "mysql",
-        port: process.env.MYSQL_PORT || 3306,
+        port: process.env.MYSQLPORT || 3306,
         logging: false,
       }
     );
