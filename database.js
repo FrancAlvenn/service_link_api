@@ -26,19 +26,6 @@ async function initDB() {
   } catch (mysqlError) {
     console.error("❌ MySQL connection failed:", mysqlError.message);
     console.log("⚠️ Falling back to SQLite in-memory database...");
-
-    // Setup fallback to SQLite
-    sequelize = new Sequelize("sqlite::memory:", {
-      logging: false,
-    });
-
-    try {
-      await sequelize.authenticate();
-      console.log("✅ Connected to SQLite in-memory database.");
-    } catch (sqliteError) {
-      console.error("❌ SQLite fallback failed:", sqliteError.message);
-      process.exit(1);
-    }
   }
 }
 
