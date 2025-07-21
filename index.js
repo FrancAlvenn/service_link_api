@@ -41,52 +41,52 @@ app.use(express.json());
 //Routes for api requests -- connected to routes/ directory
 
 //Auth Route
-app.use("/service_link_api/auth", authRoutes);
+app.use("/auth", authRoutes);
 
 //Job_Request Route
-app.use("/service_link_api/job_request", verifyToken, jobRequestRoutes);
+app.use("/job_request", verifyToken, jobRequestRoutes);
 
 //Venue Request Route
-app.use("/service_link_api/venue_request", verifyToken, venueRequestRoutes);
+app.use("/venue_request", verifyToken, venueRequestRoutes);
 
 //Vehicle Request Route
-app.use("/service_link_api/vehicle_request", verifyToken, vehicleRequestRoutes);
+app.use("/vehicle_request", verifyToken, vehicleRequestRoutes);
 
 //Purchasing Request Route
 app.use(
-  "/service_link_api/purchasing_request",
+  "/purchasing_request",
   verifyToken,
   purchasingRequestRoutes
 );
 
 //Settings Route
-app.use("/service_link_api/settings", verifyToken, settingsRoutes);
+app.use("/settings", verifyToken, settingsRoutes);
 
 //Ticket Route
-app.use("/service_link_api/ticket", verifyToken, ticketRoutes);
+app.use("/ticket", verifyToken, ticketRoutes);
 
 //User Management
-app.use("/service_link_api/users", verifyToken, userRoutes);
+app.use("/users", verifyToken, userRoutes);
 
 //Request Activity
 app.use(
-  "/service_link_api/request_activity",
+  "/request_activity",
   verifyToken,
   requestActivityRoutes
 );
 
 //Asset Management
-app.use("/service_link_api/assets", verifyToken, assetRoutes);
+app.use("/assets", verifyToken, assetRoutes);
 
 //Asset Assignment Logs
 app.use(
-  "/service_link_api/asset_assignment",
+  "/asset_assignment",
   verifyToken,
   assetAssignmentRoutes
 );
 
 //Employee Management
-app.use("/service_link_api/employees", verifyToken, employeeRoutes);
+app.use("/employees", verifyToken, employeeRoutes);
 
 const PORT = process.env.PORT || 8080;
 
