@@ -21,7 +21,7 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-var whitelist = ['http://localhost:3000', 'https://61e8d2928f21.ngrok-free.app', 'https://service-link.up.railway.app', 'https://service-link-api.onrender.com']
+var whitelist = ['http://localhost:3000', 'https://61e8d2928f21.ngrok-free.app', 'https://service-link.up.railway.app', 'https://service-link-lake.vercel.app']
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
