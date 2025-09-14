@@ -24,16 +24,21 @@ const app = express();
 var whitelist = ['http://localhost:3000', 'https://61e8d2928f21.ngrok-free.app', 'https://service-link.up.railway.app', 'https://service-link-lake.vercel.app']
 var corsOptions = {
   origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
+    if (!origin) return callback(null, true); // allow server-to-server or curl
+    if (
+      whitelist.indexOf(origin) !== -1 ||
+      /\.vercel\.app$/.test(origin) // allow all *.vercel.app
+    ) {
+      callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'))
+      callback(new Error('Not allowed by CORS: ' + origin));
     }
   },
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
-}
+};
+
 
 // Allow all origins and credentials
 
