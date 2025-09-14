@@ -24,7 +24,7 @@ export async function createAsset(req, res) {
       lastAsset ? lastAsset.asset_id : 0
     );
 
-    // Ensure additional_details is an array
+    // Ensure additional_details is always an array
     const additionalDetails = Array.isArray(req.body.additional_details)
       ? req.body.additional_details
       : [];
@@ -32,17 +32,20 @@ export async function createAsset(req, res) {
     const newAsset = await AssetModel.create(
       {
         reference_number: referenceNumber,
+        item_code: req.body.item_code,
         name: req.body.name,
-        asset_type: req.body.asset_type,
-        description: req.body.description,
+        category: req.body.category,
+        acquisition_value: req.body.acquisition_value,
+        depreciation_period: req.body.depreciation_period,
+        assigned_department: req.body.assigned_department,
+        assigned_personnel: req.body.assigned_personnel,
         location: req.body.location,
-        purchase_date:
-          req.body.purchase_date || new Date().toISOString().split("T")[0],
-        purchase_cost: req.body.purchase_cost,
+        date_of_issuance: req.body.date_of_issuance,
+        description: req.body.description,
         status: req.body.status || "Available",
-        last_maintenance: req.body.last_maintenance,
+        last_maintenance: req.body.last_maintenance || new Date().toISOString().split("T")[0],
         warranty_expiry: req.body.warranty_expiry || null,
-        additional_details: additionalDetails, // Store as an array
+        additional_details: additionalDetails, // Store as array of objects
       },
       { transaction }
     );
@@ -61,11 +64,10 @@ export async function createAsset(req, res) {
   } catch (error) {
     if (transaction) await transaction.rollback();
     console.error(error);
-    res
-      .status(500)
-      .json({ message: "Error creating asset", error: error.message });
+    res.status(500).json({ message: "Error creating asset", error: error.message });
   }
 }
+
 
 // Get all Assets
 export async function getAllAssets(req, res) {
@@ -120,23 +122,26 @@ export async function updateAsset(req, res) {
       return res.status(404).json({ message: "Asset not found." });
     }
 
-    // Ensure additional_details is an array and merge with existing data
+    // Ensure additional_details is an array
     const updatedAdditionalDetails = Array.isArray(req.body.additional_details)
       ? req.body.additional_details
       : asset.additional_details;
 
     await asset.update(
       {
+        item_code: req.body.item_code,
         name: req.body.name,
-        asset_type: req.body.asset_type,
-        description: req.body.description,
+        category: req.body.category,
+        acquisition_value: req.body.acquisition_value,
+        depreciation_period: req.body.depreciation_period,
+        assigned_department: req.body.assigned_department,
+        assigned_personnel: req.body.assigned_personnel,
         location: req.body.location,
-        purchase_date: req.body.purchase_date,
-        purchase_cost: req.body.purchase_cost,
+        date_of_issuance: req.body.date_of_issuance,
+        description: req.body.description,
         status: req.body.status,
         last_maintenance: req.body.last_maintenance,
-        warranty_expiry: req.body.warranty_expiry,
-        additional_details: updatedAdditionalDetails, // Store as an array
+        additional_details: updatedAdditionalDetails,
       },
       { transaction }
     );
@@ -155,11 +160,10 @@ export async function updateAsset(req, res) {
   } catch (error) {
     if (transaction) await transaction.rollback();
     console.error(error);
-    res
-      .status(500)
-      .json({ message: "Error updating asset", error: error.message });
+    res.status(500).json({ message: "Error updating asset", error: error.message });
   }
 }
+
 
 // Archive an Asset
 export async function deleteAsset(req, res) {

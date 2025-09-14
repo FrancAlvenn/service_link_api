@@ -325,6 +325,10 @@ const seedPosition = async () => {
 const seedDepartments = async () => {
   const defaultDepartments = [
     {
+      name: "*",
+      description: "No Department",
+    },
+    {
       name: "College of Accountancy",
       description: "Department for Accounting and Finance",
     },

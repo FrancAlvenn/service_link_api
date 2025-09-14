@@ -21,16 +21,21 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "https://b8eb-2001-4452-2f2-9300-30f9-3915-2282-42e8.ngrok-free.app",
-    "https://service-link.up.railway.app"
-  ],
+var whitelist = ['http://localhost:3000', 'https://61e8d2928f21.ngrok-free.app', 'https://service-link.up.railway.app', 'https://service-link-api.onrender.com']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
-};
+}
+
+// Allow all origins and credentials
 
 app.use(cors(corsOptions));
 
@@ -44,7 +49,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 
 //Job_Request Route
-app.use("/job_request", verifyToken, jobRequestRoutes);
+app.use("/job_request",  verifyToken, jobRequestRoutes);
 
 //Venue Request Route
 app.use("/venue_request", verifyToken, venueRequestRoutes);
@@ -71,6 +76,7 @@ app.use("/users", verifyToken, userRoutes);
 //Request Activity
 app.use(
   "/request_activity",
+  
   verifyToken,
   requestActivityRoutes
 );
@@ -90,7 +96,7 @@ app.use("/employees", verifyToken, employeeRoutes);
 
 const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, async () => {
+app.listen(8080, async () => {
   console.log("✅ Connected");
-  await syncModels(sequelize); // Sync all models
+  // await syncModels(sequelize); // Sync all models
 });
