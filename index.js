@@ -103,5 +103,5 @@ const PORT = process.env.PORT || 8080;
 
 app.listen(8080, async () => {
   console.log("✅ Connected");
-  // await syncModels(sequelize); // Sync all models
+  await syncModels(sequelize); // Sync all models
 });
