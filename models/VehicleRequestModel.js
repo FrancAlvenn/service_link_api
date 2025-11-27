@@ -19,6 +19,10 @@ const VehicleRequest = sequelize.define(
       allowNull: true,
       defaultValue: null,
     },
+    department: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
     vehicle_requested: {
       type: DataTypes.STRING(100),
       allowNull: true,

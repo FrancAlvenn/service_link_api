@@ -32,6 +32,7 @@ export async function createPurchasingRequest(req, res) {
       {
         reference_number: referenceNumber,
         title: req.body.title,
+        department: req.body.department,
         supply_category: req.body.supply_category,
         date_required: req.body.date_required,
         purpose: req.body.purpose,

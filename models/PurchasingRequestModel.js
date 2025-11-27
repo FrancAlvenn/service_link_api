@@ -19,6 +19,10 @@ const PurchasingRequest = sequelize.define(
       allowNull: true,
       defaultValue: null,
     },
+    department: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
     date_required: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -28,6 +28,7 @@ export async function createVenueRequest(req, res) {
     const newVenueRequisition = await VenueRequestModel.create({
       reference_number: referenceNumber,
       title: req.body.title,
+      department: req.body.department,
       venue_id: req.body.venue_id,
       requester: req.body.requester,
       organization: req.body.organization || null,
