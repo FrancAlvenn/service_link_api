@@ -12,6 +12,8 @@ import requestActivityRoutes from "./routes/request_activity.js";
 import assetRoutes from "./routes/assets.js";
 import assetAssignmentRoutes from "./routes/asset_assignment.js";
 import employeeRoutes from "./routes/employee.js";
+import venueRoutes from "./routes/venues.js";
+import vehicleRoutes from "./routes/vehicles.js";
 
 import sequelize from "./database.js";
 import { syncModels } from "./models/syncModels.js";
@@ -98,6 +100,12 @@ app.use(
 
 //Employee Management
 app.use("/employees", verifyToken, employeeRoutes);
+
+//Venue Management
+app.use("/venues", verifyToken, venueRoutes);
+
+//Vehicle Management
+app.use("/vehicles", vehicleRoutes);
 
 const PORT = process.env.PORT || 8080;
 

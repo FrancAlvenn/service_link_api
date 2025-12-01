@@ -1,14 +1,22 @@
 import sequelize from "../database.js";
-import { VehicleRequestModel } from "../models/index.js";
+import { VehicleRequestModel, VehicleModel } from "../models/index.js";
 import { Op } from "sequelize";
 import { createLog } from "./system_logs.js";
 import User from "../models/UserModel.js";
+import VehicleBookingsModel from "../models/VehicleBookingsModel.js";
 
 // Generate a unique reference number (e.g., DYCI-2024-0001)
 function generateReferenceNumber(lastRequestId) {
   const year = new Date().getFullYear();
   const uniqueNumber = String(lastRequestId + 1).padStart(5, "0");
   return `SV-${year}-${uniqueNumber}`;
+}
+
+// Generate booking reference number (same as in vehicles controller)
+function generateBookingReferenceNumber(lastBookingId) {
+  const year = new Date().getFullYear();
+  const uniqueNumber = String(lastBookingId + 1).padStart(5, "0");
+  return `VHB-${year}-${uniqueNumber}`;
 }
 
 // Create Vehicle Requests
@@ -46,6 +54,49 @@ export async function createVehicleRequest(req, res) {
       authorized_access: [req.body.requester],
       approvers: [req.body.approvers],
     });
+
+    // Create a pending booking for this request so other users can see it
+    try {
+      // Generate unique reference number for booking
+      const lastBooking = await VehicleBookingsModel.findOne({
+        order: [["booking_id", "DESC"]],
+      });
+      const bookingRefNumber = generateBookingReferenceNumber(
+        lastBooking ? lastBooking.booking_id : 0
+      );
+
+      // Format date_of_trip to DATEONLY format
+      const tripDate = req.body.date_of_trip instanceof Date 
+        ? req.body.date_of_trip.toISOString().split("T")[0]
+        : req.body.date_of_trip.split("T")[0];
+
+      // Create pending booking
+      await VehicleBookingsModel.create({
+        reference_number: bookingRefNumber,
+        vehicle_id: req.body.vehicle_id,
+        vehicle_request_id: referenceNumber,
+        requester: req.body.requester,
+        organization: req.body.department || null,
+        event_title: req.body.title || "Vehicle Request",
+        event_description: req.body.purpose || null,
+        booking_date: tripDate,
+        start_time: req.body.time_of_departure,
+        end_time: req.body.time_of_arrival || null,
+        destination: req.body.destination || null,
+        destination_coordinates: req.body.destination_coordinates || null,
+        participants: null,
+        pax_estimation: req.body.number_of_passengers || 0,
+        status: "Pending",
+        confirmed_by: null,
+        confirmed_at: null,
+        remarks: req.body.remarks || null,
+        additional_requirements: [],
+      });
+    } catch (bookingError) {
+      console.error("Error creating pending booking:", bookingError);
+      // Don't fail the request creation if booking creation fails
+      // Log it but continue
+    }
 
     res.status(201).json({ message: `Request created successfully!` });
 
@@ -124,14 +175,16 @@ export async function getVehicleRequestById(req, res) {
     const requisition = await VehicleRequestModel.findOne({
       where: {
         reference_number: req.params.reference_number,
-      },
-      archived: {
-        [Op.eq]: false, // Get all that is not archived
+        archived: false,
       },
       include: [
         {
           model: User,
           as: "requester_details",
+        },
+        {
+          model: VehicleModel,
+          as: "vehicle_details",
         },
       ],
     });

@@ -27,8 +27,8 @@ const VenueRequest = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "assets",
-        key: "asset_id",
+        model: "venues",
+        key: "venue_id",
       },
       onDelete: "CASCADE",
     },
