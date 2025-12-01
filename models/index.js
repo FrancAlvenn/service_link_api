@@ -10,6 +10,12 @@ import UserModel from "./UserModel.js";
 import VehicleRequestModel from "./VehicleRequestModel.js";
 import Organization from "./SettingsModels/OrganizationModel.js";
 import AssetModel from "./AssetsModel.js";
+import VenueModel from "./VenueModel.js";
+import VenueUnavailabilityModel from "./VenueUnavailabilityModel.js";
+import VenueBookingsModel from "./VenueBookingsModel.js";
+import VehicleModel from "./VehicleModel.js";
+import VehicleUnavailabilityModel from "./VehicleUnavailabilityModel.js";
+import VehicleBookingsModel from "./VehicleBookingsModel.js";
 
 // Define associations
 JobRequestModel.hasMany(JobRequestDetails, {
@@ -52,9 +58,9 @@ VenueRequests.hasMany(VenueRequestDetail, {
   as: "details",
 });
 
-VenueRequests.belongsTo(AssetModel, {
+VenueRequests.belongsTo(VenueModel, {
   foreignKey: "venue_id",
-  targetKey: "asset_id",
+  targetKey: "venue_id",
   as: "venue_details",
 });
 
@@ -76,6 +82,12 @@ VehicleRequestModel.belongsTo(UserModel, {
   as: "requester_details",
 });
 
+VehicleRequestModel.belongsTo(VehicleModel, {
+  foreignKey: "vehicle_id",
+  targetKey: "vehicle_id",
+  as: "vehicle_details",
+});
+
 UserModel.belongsTo(DepartmentsModel, {
   foreignKey: "department_id",
   targetKey: "id",
@@ -94,6 +106,68 @@ UserModel.belongsTo(Organization, {
   as: "organization",
 });
 
+// Venue Model Associations
+VenueModel.hasMany(VenueUnavailabilityModel, {
+  foreignKey: "venue_id",
+  sourceKey: "venue_id",
+  as: "unavailability",
+});
+
+VenueModel.hasMany(VenueBookingsModel, {
+  foreignKey: "venue_id",
+  sourceKey: "venue_id",
+  as: "bookings",
+});
+
+VenueUnavailabilityModel.belongsTo(VenueModel, {
+  foreignKey: "venue_id",
+  targetKey: "venue_id",
+  as: "venue",
+});
+
+VenueBookingsModel.belongsTo(VenueModel, {
+  foreignKey: "venue_id",
+  targetKey: "venue_id",
+  as: "venue",
+});
+
+VenueBookingsModel.belongsTo(UserModel, {
+  foreignKey: "requester",
+  targetKey: "reference_number",
+  as: "requester_details",
+});
+
+// Vehicle Model Associations
+VehicleModel.hasMany(VehicleUnavailabilityModel, {
+  foreignKey: "vehicle_id",
+  sourceKey: "vehicle_id",
+  as: "unavailability",
+});
+
+VehicleModel.hasMany(VehicleBookingsModel, {
+  foreignKey: "vehicle_id",
+  sourceKey: "vehicle_id",
+  as: "bookings",
+});
+
+VehicleUnavailabilityModel.belongsTo(VehicleModel, {
+  foreignKey: "vehicle_id",
+  targetKey: "vehicle_id",
+  as: "vehicle",
+});
+
+VehicleBookingsModel.belongsTo(VehicleModel, {
+  foreignKey: "vehicle_id",
+  targetKey: "vehicle_id",
+  as: "vehicle",
+});
+
+VehicleBookingsModel.belongsTo(UserModel, {
+  foreignKey: "requester",
+  targetKey: "reference_number",
+  as: "requester_details",
+});
+
 export {
   JobRequestModel,
   JobRequestDetails,
@@ -104,4 +178,10 @@ export {
   VehicleRequestModel,
   UserModel,
   AssetModel,
+  VenueModel,
+  VenueUnavailabilityModel,
+  VenueBookingsModel,
+  VehicleModel,
+  VehicleUnavailabilityModel,
+  VehicleBookingsModel,
 };

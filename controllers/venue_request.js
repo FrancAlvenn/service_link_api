@@ -4,7 +4,8 @@ import { Op } from "sequelize";
 import { createLog } from "./system_logs.js";
 import VenueRequestDetails from "../models/VenueRequestDetails.js";
 import User from "../models/UserModel.js";
-import AssetModel from "../models/AssetsModel.js";
+import VenueModel from "../models/VenueModel.js";
+import VenueBookingsModel from "../models/VenueBookingsModel.js";
 
 // Generate a unique reference number (e.g., DYCI-2024-0001)
 function generateReferenceNumber(lastRequestId) {
@@ -60,6 +61,42 @@ export async function createVenueRequest(req, res) {
 
     await sequelize.models.VenueRequestDetail.bulkCreate(detailsData);
 
+    // Create a pending booking for this request so other users can see it
+    try {
+      // Generate unique reference number for booking
+      const lastBooking = await VenueBookingsModel.findOne({
+        order: [["booking_id", "DESC"]],
+      });
+      const bookingRefNumber = generateBookingReferenceNumber(
+        lastBooking ? lastBooking.booking_id : 0
+      );
+
+      // Create pending booking
+      await VenueBookingsModel.create({
+        reference_number: bookingRefNumber,
+        venue_id: req.body.venue_id,
+        venue_request_id: referenceNumber,
+        requester: req.body.requester,
+        organization: req.body.organization || null,
+        event_title: req.body.event_title || req.body.title || "Venue Request",
+        event_description: req.body.purpose || null,
+        booking_date: req.body.event_dates,
+        start_time: req.body.event_start_time,
+        end_time: req.body.event_end_time,
+        participants: req.body.participants || null,
+        pax_estimation: req.body.pax_estimation || 0,
+        status: "Pending",
+        confirmed_by: null,
+        confirmed_at: null,
+        remarks: req.body.remarks || null,
+        additional_requirements: req.body.details || [],
+      });
+    } catch (bookingError) {
+      console.error("Error creating pending booking:", bookingError);
+      // Don't fail the request creation if booking creation fails
+      // Log it but continue
+    }
+
     res.status(201).json({ message: `Request created successfully!` });
 
     //Log the request
@@ -73,6 +110,13 @@ export async function createVenueRequest(req, res) {
   } catch (error) {
     res.status(500).json({ message: `Encountered an internal error ${error}` });
   }
+}
+
+// Generate booking reference number (same as in venues controller)
+function generateBookingReferenceNumber(lastBookingId) {
+  const year = new Date().getFullYear();
+  const uniqueNumber = String(lastBookingId + 1).padStart(5, "0");
+  return `VB-${year}-${uniqueNumber}`;
 }
 
 // Get All Venue Requests with Details
@@ -90,7 +134,7 @@ export async function getAllVenueRequest(req, res) {
           as: "requester_details",
         },
         {
-          model: AssetModel,
+          model: VenueModel,
           as: "venue_details",
         },
       ],
@@ -122,7 +166,7 @@ export async function getAllArchivedVenueRequest(req, res) {
           as: "requester_details",
         },
         {
-          model: AssetModel,
+          model: VenueModel,
           as: "venue_details",
         },
       ],
@@ -154,7 +198,7 @@ export async function getVenueRequestById(req, res) {
           as: "requester_details",
         },
         {
-          model: AssetModel,
+          model: VenueModel,
           as: "venue_details",
         },
       ],

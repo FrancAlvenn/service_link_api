@@ -15,6 +15,12 @@ import {
   VenueRequestDetail,
   VehicleRequestModel,
   UserModel,
+  VenueModel,
+  VenueUnavailabilityModel,
+  VenueBookingsModel,
+  VehicleModel,
+  VehicleUnavailabilityModel,
+  VehicleBookingsModel,
 } from "./index.js";
 import SystemLogsModel from "./SystemLogs.js";
 import Ticket from "./TicketModel.js";
@@ -48,6 +54,12 @@ const models = [
   PurchasingRequestDetails,
   VenueRequests,
   VenueRequestDetail,
+  VenueModel,
+  VenueUnavailabilityModel,
+  VenueBookingsModel,
+  VehicleModel,
+  VehicleUnavailabilityModel,
+  VehicleBookingsModel,
   RequestActivity,
   SystemLogsModel,
   Ticket,
@@ -85,6 +97,14 @@ const syncModels = async (sequelizeInstance) => {
 
     await AssetsModel.sync({ force: true });
     await AssetAssignmentLogModel.sync({ force: true });
+    
+    await VenueModel.sync({ force: true });
+    await VenueUnavailabilityModel.sync({ force: true });
+    await VenueBookingsModel.sync({ force: true });
+
+    await VehicleModel.sync({ force: true });
+    await VehicleUnavailabilityModel.sync({ force: true });
+    await VehicleBookingsModel.sync({ force: true });
 
     await VenueRequests.sync({ force: true });
     await VenueRequestDetail.sync({ force: true });

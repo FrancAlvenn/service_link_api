@@ -39,11 +39,11 @@ const VehicleRequest = sequelize.define(
       defaultValue: null,
     },
     date_filled: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false,
     },
     date_of_trip: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false,
     },
     time_of_departure: {
@@ -67,6 +67,7 @@ const VehicleRequest = sequelize.define(
     requester: {
       type: DataTypes.STRING(100),
       allowNull: false,
+      field: "requester_id",
       references: {
         model: "users",
         key: "reference_number",
@@ -83,7 +84,12 @@ const VehicleRequest = sequelize.define(
     },
     vehicle_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
+      references: {
+        model: "vehicles",
+        key: "vehicle_id",
+      },
+      onDelete: "CASCADE",
     },
     remarks: {
       type: DataTypes.TEXT,
@@ -132,7 +138,7 @@ const VehicleRequest = sequelize.define(
     },
   },
   {
-    tableName: "vehicle_requests",
+    tableName: "vehicle_requisition",
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
