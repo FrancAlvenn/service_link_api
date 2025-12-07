@@ -14,6 +14,11 @@ import assetAssignmentRoutes from "./routes/asset_assignment.js";
 import employeeRoutes from "./routes/employee.js";
 import venueRoutes from "./routes/venues.js";
 import vehicleRoutes from "./routes/vehicles.js";
+import vehicleUnavailableRoutes from "./routes/vehicle-unavailable.js";
+import vehicleBookingRoutes from "./routes/vehicle-bookings.js";
+import unavailableRoute from "./routes/venue-unavailable.js";
+import bookingRoutes from "./routes/venue-bookings.js";
+
 
 import sequelize from "./database.js";
 import { syncModels } from "./models/syncModels.js";
@@ -104,8 +109,16 @@ app.use("/employees", verifyToken, employeeRoutes);
 //Venue Management
 app.use("/venues", verifyToken, venueRoutes);
 
+app.use("/venue-unavailability", verifyToken, unavailableRoute);
+
+app.use("/venue-bookings", verifyToken, bookingRoutes);
+
+
+
 //Vehicle Management
 app.use("/vehicles", vehicleRoutes);
+app.use("/vehicle-unavailability", verifyToken, vehicleUnavailableRoutes);
+app.use("/vehicle-bookings", verifyToken, vehicleBookingRoutes);
 
 const PORT = process.env.PORT || 8080;
 
