@@ -111,9 +111,10 @@ export async function getVenueById(req, res) {
       where: { reference_number: req.params.reference_number },
     });
 
-    if (!venue) {
+  if (!venue) {
+      console.warn(`404 Venue not found for reference_number=${req.params.reference_number}`);
       return res.status(404).json({ message: "Venue not found." });
-    }
+  }
 
     res.status(200).json(venue);
   } catch (error) {
@@ -134,6 +135,7 @@ export async function updateVenue(req, res) {
     });
 
     if (!venue) {
+      console.warn(`404 Venue not found for reference_number=${req.params.reference_number}`);
       return res.status(404).json({ message: "Venue not found." });
     }
 
@@ -193,6 +195,7 @@ export async function deleteVenue(req, res) {
     );
 
     if (updatedRows === 0) {
+      console.warn(`404 Venue not found or already archived for reference_number=${req.params.reference_number}`);
       return res
         .status(404)
         .json({ message: "Venue not found or already archived." });
@@ -223,6 +226,7 @@ export async function getVenuesByStatus(req, res) {
     });
 
     if (!venues.length) {
+      console.warn(`404 No venues with status ${req.params.status}`);
       return res
         .status(404)
         .json({ message: `No venues with status ${req.params.status}` });
@@ -250,6 +254,7 @@ export async function createVenueUnavailability(req, res) {
     // Validate venue exists
     const venue = await VenueModel.findByPk(req.body.venue_id);
     if (!venue) {
+      console.warn(`404 Venue not found for venue_id=${req.body.venue_id}`);
       return res.status(404).json({ message: "Venue not found." });
     }
 
@@ -342,6 +347,7 @@ export async function getVenueUnavailabilityById(req, res) {
     );
 
     if (!unavailability) {
+      console.warn(`404 Venue unavailability not found for id=${req.params.unavailability_id}`);
       return res.status(404).json({ message: "Unavailability record not found." });
     }
 
@@ -391,6 +397,7 @@ export async function updateVenueUnavailability(req, res) {
     );
 
     if (!unavailability) {
+      console.warn(`404 Venue unavailability not found for id=${req.params.unavailability_id}`);
       return res.status(404).json({ message: "Unavailability record not found." });
     }
 
@@ -447,6 +454,7 @@ export async function deleteVenueUnavailability(req, res) {
     );
 
     if (!unavailability) {
+      console.warn(`404 Venue unavailability not found for id=${req.params.unavailability_id}`);
       return res.status(404).json({ message: "Unavailability record not found." });
     }
 
@@ -647,6 +655,7 @@ export async function getVenueBookingById(req, res) {
     });
 
     if (!booking) {
+      console.warn(`404 Venue booking not found for id=${req.params.booking_id}`);
       return res.status(404).json({ message: "Booking not found." });
     }
 
@@ -722,6 +731,7 @@ export async function updateVenueBooking(req, res) {
     const booking = await VenueBookingsModel.findByPk(req.params.booking_id);
 
     if (!booking) {
+      console.warn(`404 Venue booking not found for id=${req.params.booking_id}`);
       return res.status(404).json({ message: "Booking not found." });
     }
 
@@ -834,6 +844,7 @@ export async function deleteVenueBooking(req, res) {
     const booking = await VenueBookingsModel.findByPk(req.params.booking_id);
 
     if (!booking) {
+      console.warn(`404 Venue booking not found for id=${req.params.booking_id}`);
       return res.status(404).json({ message: "Booking not found." });
     }
 
@@ -881,6 +892,7 @@ export async function checkVenueAvailability(req, res) {
     // Check if venue exists and is available
     const venue = await VenueModel.findByPk(venue_id);
     if (!venue) {
+      console.warn(`404 Venue not found in availability check for venue_id=${venue_id}`);
       return res.status(404).json({ message: "Venue not found." });
     }
 
