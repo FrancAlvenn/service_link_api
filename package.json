@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "node ./tests/matchEmployeesToJob.test.js"
   },
   "dependencies": {
     "axios": "^1.10.0",

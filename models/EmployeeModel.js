@@ -57,10 +57,83 @@ const EmployeeModel = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
-    employment_status: {
+  employment_status: {
       type: DataTypes.STRING(50),
       defaultValue: "Active",
       allowNull: true,
+    },
+    availability_status: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      defaultValue: "Available",
+      validate: {
+        isIn: {
+          args: [["Available", "Unavailable", "On Leave", "Busy"]],
+          msg: "availability_status must be one of: Available, Unavailable, On Leave, Busy",
+        },
+      },
+      comment: "Current availability of the employee",
+    },
+    experience_level: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      defaultValue: "Mid",
+      validate: {
+        isIn: {
+          args: [["Junior", "Mid", "Senior"]],
+          msg: "experience_level must be one of: Junior, Mid, Senior",
+        },
+      },
+      comment: "Seniority level of the employee",
+    },
+    qualifications: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      defaultValue: [],
+      validate: {
+        isValidArray(value) {
+          if (value == null) return;
+          if (!Array.isArray(value)) {
+            throw new Error("qualifications must be an array");
+          }
+          const allowed = [
+            "Plumbing",
+            "Electrical",
+            "Carpentry",
+            "HVAC",
+            "Welding",
+            "Painting",
+            "Masonry",
+            "IT Support",
+            "Cleaning",
+            "General Maintenance",
+          ];
+          for (const v of value) {
+            if (typeof v !== "string") {
+              throw new Error("each qualification must be a string");
+            }
+            if (!allowed.includes(v)) {
+              throw new Error(`qualification '${v}' is not allowed`);
+            }
+          }
+        },
+      },
+      comment: "Array of skills/certifications",
+    },
+    specializations: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      defaultValue: [],
+      validate: {
+        isValidArray(value) {
+          if (value == null) return;
+          if (!Array.isArray(value)) throw new Error("specializations must be an array");
+          for (const v of value) {
+            if (typeof v !== "string") throw new Error("each specialization must be a string");
+          }
+        },
+      },
+      comment: "Detailed areas of expertise",
     },
     supervisor_id: {
       type: DataTypes.INTEGER,

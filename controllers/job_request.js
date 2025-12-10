@@ -43,6 +43,7 @@ export async function createJobRequest(req, res) {
         remarks: req.body.remarks || null,
         authorized_access: [req.body.requester],
         approvers: [req.body.approvers],
+        assigned_to: req.body.assigned_to || null,
       },
       { transaction }
     );
