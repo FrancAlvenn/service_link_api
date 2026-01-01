@@ -17,6 +17,13 @@ function generateReferenceNumber(lastRequestId) {
 // Create Venue Requests
 export async function createVenueRequest(req, res) {
   try {
+    const hasPax = Object.prototype.hasOwnProperty.call(req.body, "pax_estimation");
+    if (hasPax) {
+      const paxNum = Number(req.body.pax_estimation);
+      if (Number.isNaN(paxNum) || paxNum < 0) {
+        return res.status(400).json({ message: "pax_estimation must be a number >= 0" });
+      }
+    }
     // Generate a unique reference number
     const lastRequest = await VenueRequestModel.findOne({
       order: [["id", "DESC"]],
@@ -220,6 +227,13 @@ export async function getVenueRequestById(req, res) {
 export async function updateVenueRequest(req, res) {
   try {
     const { details, ...updateData } = req.body;
+    const hasPax = Object.prototype.hasOwnProperty.call(updateData, "pax_estimation");
+    if (hasPax) {
+      const paxNum = Number(updateData.pax_estimation);
+      if (Number.isNaN(paxNum) || paxNum < 0) {
+        return res.status(400).json({ message: "pax_estimation must be a number >= 0" });
+      }
+    }
 
     const [updatedRows] = await VenueRequestModel.update(updateData, {
       where: { reference_number: req.params.reference_number },
